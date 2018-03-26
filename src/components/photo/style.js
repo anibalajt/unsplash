@@ -33,26 +33,33 @@ module.exports = StyleSheet.create({
     color: "#b9c1c7",
     fontSize: 12
   },
-  content_photo: {
-    height: 300
-  },
+  content_photo: {},
   photo: {
     width: width,
-    height: 300
+    minHeight: 300
     // resizeMode: "center"
   },
   photo_activity: {
+    flexDirection: "row",
+    alignItems: "stretch",
     paddingTop: 10,
     paddingHorizontal: 10
   },
-  photo_like: {
-    width: 50,
-    color:"#999",
+  content_photo_like: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    // width: 70,
+    paddingHorizontal: 15,
     paddingTop: 5,
     paddingBottom: 3,
     borderRadius: 4,
-    textAlign: "center",
-    borderColor: "#ddd",
+    borderColor: "#ccc",
     borderWidth: 1
+  },
+  photo_like: {
+    paddingLeft: 10,
+    fontSize: 18,
+    color: "#999"
   }
 });

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, Image, TouchableWithoutFeedback } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
 import moment from "moment";
 import {
   container,
@@ -11,7 +12,8 @@ import {
   photo,
   hours_style,
   photo_activity,
-  photo_like
+  photo_like,
+  content_photo_like
 } from "./style";
 const color = [
   "rgb(239, 77, 0)",
@@ -22,7 +24,9 @@ const color = [
 ];
 export default ({
   handleViewProfile,
-  item: { user, likes, created_at, urls: { small } }
+  handleDownload,
+  handleAddCollection,
+  item: { id, user, likes, created_at, urls: { small } }
 }) => {
   const { first_name, last_name, profile_image, username } = user;
   //
@@ -60,7 +64,30 @@ export default ({
         <Image style={photo} source={{ uri: small }} />
       </View>
       <View style={photo_activity}>
-        <Text style={photo_like}>{likes}</Text>
+        <View style={content_photo_like}>
+          <Icon name="heart" size={15} color="#f15151" />
+          <Text style={photo_like}>{likes}</Text>
+        </View>
+        <TouchableWithoutFeedback
+          onPress={e => {
+            handleAddCollection(id);
+          }}
+        >
+          <View style={[content_photo_like, { marginLeft: 10 }]}>
+            <Icon name="plus" size={15} color="grey" />
+          </View>
+        </TouchableWithoutFeedback>
+
+        <View style={{ flex: 1 }} />
+        <TouchableWithoutFeedback
+          onPress={e => {
+            handleDownload(id);
+          }}
+        >
+          <View style={content_photo_like}>
+            <Icon name="download" size={15} color="grey" />
+          </View>
+        </TouchableWithoutFeedback>
       </View>
     </View>
   );

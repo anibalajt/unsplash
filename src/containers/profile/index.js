@@ -5,8 +5,10 @@
  */
 
 import React, { Component } from "react";
+import Icon from "react-native-vector-icons/FontAwesome";
+
 import { View, Text, ScrollView, Image } from "react-native";
-import { getProfile, getListPhotos } from "../../utils/Unsplash";
+import { getProfile, getPhotos } from "../../utils/Unsplash";
 import Tags from "../../components/tags/index";
 import Photo from "../../components/photo/index";
 
@@ -23,16 +25,21 @@ import {
 } from "./style";
 
 export default class Profile extends Component {
+  static navigationOptions = {
+    header: null,
+    title: "user",
+    tabBarIcon: () => {
+      return <Icon name="user" size={25} color="#999" />;
+    }
+  };
   state = { user: {}, photos: [] };
   async componentWillMount() {
     // users/neonbrand/photos
     const { params } = this.props.navigation.state;
-    const { username  } = params;
-    // const username = "petebellis";
+    const { username } = params;
     const user = await getProfile(username);
-    console.log(user);
 
-    const photos = await getListPhotos(`users/${username}/photos`);
+    const photos = await getPhotos(`users/${username}/photos`);
 
     this.setState({ user, photos });
   }

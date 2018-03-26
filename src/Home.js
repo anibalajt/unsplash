@@ -6,23 +6,67 @@
 
 import React, { Component } from "react";
 import { Platform, StyleSheet, Text, ScrollView } from "react-native";
-import { getListPhotos } from "./utils/Unsplash";
+import Icon from "react-native-vector-icons/FontAwesome";
+
+import { getPhotos } from "./utils/Unsplash";
 import Photo from "./components/photo/index";
 
 export default class App extends Component {
+  static navigationOptions = ({ navigation }) => ({
+    header: null,
+    title: "home",
+    tabBarIcon: (e, b) => {
+      const { routeName } = navigation.state;
+      let iconName;
+      switch (routeName) {
+        case "home":
+          iconName = "home";
+          break;
+        case "new":
+          iconName = "image";
+          break;
+      }
+      return (
+        <Icon
+          name={iconName}
+          size={30}
+          iconStyle={{ padding: 30 }}
+          color="#999"
+        />
+      );
+    }
+  });
   state = {
     photos: []
   };
   componentDidMount() {}
   componentWillMount() {
-    this.getPhotos();
+    routeName = this.props.navigation.state.routeName;
+    let order_by;
+    switch (routeName) {
+      case "home":
+        order_by = "popular";
+        break;
+      case "new":
+        order_by = "latest";
+        break;
+    }
+    this.getPhotos(order_by);
   }
-  getPhotos = async () => {
-    const photos = await getListPhotos("photos/");
+  getPhotos = async order_by => {
+    const photos = await getPhotos("photos/", 0, 15, order_by);
     this.setState({ photos });
   };
   handleViewProfile = username => {
     this.props.navigation.navigate("profile", { username });
+  };
+  handleDownload = async id => {
+    // const photos = await getPhotos(`photos/${id}/download`);
+    console.log("photos:", id);
+  };
+  handleAddCollection = async id => {
+    // const photos = await getPhotos(`photos/${id}/download`);
+    this.props.navigation.navigate("add_to_collection", { id });
   };
   render() {
     const { photos } = this.state;
@@ -32,6 +76,8 @@ export default class App extends Component {
         {photos.map((item, i) => (
           <Photo
             handleViewProfile={this.handleViewProfile}
+            handleDownload={this.handleDownload}
+            handleAddCollection={this.handleAddCollection}
             item={item}
             key={i}
           />
