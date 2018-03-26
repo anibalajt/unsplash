@@ -33,10 +33,22 @@ export default class SearchAux extends Component {
     const { query } = this.state;
     return (
       <ScrollView style={container}>
-        <View style={header}>
+        <View
+          style={[
+            header,
+            {
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItem: "center"
+            }
+          ]}
+        >
           <View style={conten_input}>
             <Icon name="search" size={25} color="#999" />
             <TextInput
+              onSubmitEditing={() =>
+                this.props.navigation.navigate("search", { query })
+              }
               style={input}
               underlineColorAndroid="transparent"
               value={query}

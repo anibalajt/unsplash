@@ -5,11 +5,19 @@
  */
 
 import React, { Component } from "react";
-import { Platform, StyleSheet, Text, ScrollView } from "react-native";
+import {
+  Platform,
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  ListView
+} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 
 import { getPhotos } from "./utils/Unsplash";
 import Photo from "./components/photo/index";
+const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 
 export default class App extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -37,7 +45,10 @@ export default class App extends Component {
     }
   });
   state = {
-    photos: []
+    photos: [],
+    per_page: 15,
+    page: 1,
+    dataSource: false
   };
   componentDidMount() {}
   componentWillMount() {
@@ -51,11 +62,16 @@ export default class App extends Component {
         order_by = "latest";
         break;
     }
-    this.getPhotos(order_by);
+    const { per_page, page } = this.state;
+
+    this.getPhotos(page, per_page, order_by);
   }
-  getPhotos = async order_by => {
-    const photos = await getPhotos("photos/", 0, 15, order_by);
-    this.setState({ photos });
+  getPhotos = async (page, per_page, order_by) => {
+    let photos = await getPhotos("photos/", page, per_page, order_by);
+    photos = photos.concat(this.state.photos);
+
+    let dataSource = ds.cloneWithRows(photos);
+    this.setState({ photos, dataSource });
   };
   handleViewProfile = username => {
     this.props.navigation.navigate("profile", { username });
@@ -68,21 +84,42 @@ export default class App extends Component {
     // const photos = await getPhotos(`photos/${id}/download`);
     this.props.navigation.navigate("add_to_collection", { id });
   };
+  EndReached = () => {
+    console.log("EndReached");
+    let { per_page, page, order_by } = this.state;
+    per_page += 15;
+    page += 1;
+    this.setState({
+      per_page,
+      page,
+      order_by
+    });
+    this.getPhotos(page, per_page, order_by);
+  };
   render() {
-    const { photos } = this.state;
-
+    const { dataSource } = this.state;
     return (
-      <ScrollView style={styles.container}>
-        {photos.map((item, i) => (
-          <Photo
-            handleViewProfile={this.handleViewProfile}
-            handleDownload={this.handleDownload}
-            handleAddCollection={this.handleAddCollection}
-            item={item}
-            key={i}
+      <View style={styles.container}>
+        {dataSource ? (
+          <ListView
+            initialListSize={15}
+            removeClippedSubviews={false}
+            dataSource={dataSource}
+            onEndReached={this.EndReached}
+            renderRow={(item, i) => {
+              return (
+                <Photo
+                  handleViewProfile={this.handleViewProfile}
+                  handleDownload={this.handleDownload}
+                  handleAddCollection={this.handleAddCollection}
+                  item={item}
+                  key={i}
+                />
+              );
+            }}
           />
-        ))}
-      </ScrollView>
+        ) : null}
+      </View>
     );
   }
 }

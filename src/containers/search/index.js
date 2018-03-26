@@ -52,8 +52,8 @@ export default class Search extends Component {
   };
   async componentWillMount() {
     const { params } = this.props.navigation.state;
-    // const { query } = params;
-    const query = "women";
+    const { query } = params;
+    // const query = "women";
     this.search(query);
   }
   search = async query => {

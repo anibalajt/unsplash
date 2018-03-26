@@ -1,5 +1,5 @@
 import request from "superagent";
-// import photos from "./photos.json";
+import photos from "./photos.json";
 // import collection from "./collection.json";
 // import search from "./search.json";
 const APP_ID = "23113";
@@ -21,13 +21,13 @@ export const getPhotos = async (
   param += order_by ? `order_by=${order_by}&` : "";
   param += query ? `query=${query}&` : "";
   param += APP_SECRET ? `client_id=${APP_SECRET}` : "";
-  console.log("param:", param);
+  console.log(param);
   const { ok, body, error } = await request.get(`${URL}${endPoint}?${param}`);
   if (ok) {
     return body;
   }
   // if (true) {
-  //   return search;
+  //   return photos;
   // }
   return error;
 };
